@@ -1,0 +1,45 @@
+#!/bin/bash
+#++++++++++++++++++++++++++ Script begins here ++++++++++++++++++++++++++
+if [ "$1" == "-h" ] || [ "$1" == "-help" ] || [ "$1" == "--help" ]; then
+    	########## HELP begins here ##########
+    	echo
+    	echo "This script is used to facilitate the creation of text files summarising the results obtained by freesurfer. Ideally, after running the segmentation, we would run aparcstats2table, this script facilitates things since it gives us the opportunity of passing the list of subject in a text file. It takes three arguments, 1) Filename, 2) Hemisphere, 3) measurement (thickness/thicknessstd)"
+    	echo""
+    	echo " \$ `basename $0` FNAME.txt lh thickness"
+    	echo ""
+    	echo "                             	acb 12.6.2014"
+    	########### HELP ends here ###########
+elif [ "$1" == "edit" ]; then
+    	vim $0
+else
+    	if [ -z $1 ]; then
+            	$0 --help
+    	else
+            	########## BODY begins here ##########
+        	FNAME=$1
+        	HEMI=$2
+        	MEAS=$3
+        	echo $COUNTER
+        	while read subj;
+        	do
+            	echo $subj
+            	if [[ $COUNTER -eq 0 ]];
+            	then
+
+                	STR="$subj"
+            	else
+                	STR="$STR $subj"
+            	fi
+            	COUNTER=$((COUNTER + 1))
+
+        	done <$FNAME
+        	aparcstats2table --hemi $HEMI \
+            	--subjects $STR \
+            	--meas $MEAS \
+            	--parc aparc \
+            	--tablefile "$HEMI".aparc."$MEAS".table
+
+            	########### BODY ends here ###########
+    	fi
+fi
+#+++++++++++++++++++++++++++ Script ends here +++++++++++++++++++++++++++

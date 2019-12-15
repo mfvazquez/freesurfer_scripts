@@ -1,0 +1,22 @@
+#!/bin/bash
+#++++++++++++++++++++++++++ Script begins here ++++++++++++++++++++++++++
+if [ "$1" == "-h" ] || [ "$1" == "-help" ] || [ "$1" == "--help" ]; then
+    	########## HELP begins here ##########
+    	echo
+    	echo "View FreeSurfer brain parcellation"
+    	echo " \$ `basename $0` <FreeSurfer ID in $SUBJECTS_DIR>"
+    	echo
+    	########### HELP ends here ###########
+elif [ "$1" == "edit" ]; then
+    	vim $0
+else
+    	if [ -z $1 ]; then
+            	$0 --help
+    	else
+            	########## BODY begins here ##########
+            	i=$1
+            	freeview -v $SUBJECTS_DIR/$i/mri/norm.mgz -v $SUBJECTS_DIR/$i/mri/aseg.mgz:colormap=lut:opacity=0.2 -f $SUBJECTS_DIR/$i/surf/lh.white:edgecolor=yellow -f $SUBJECTS_DIR/$i/surf/rh.white:edgecolor=yellow -f $SUBJECTS_DIR/$i/surf/lh.pial:annot=aparc:edgecolor=red -f $SUBJECTS_DIR/$i/surf/rh.pial:annot=aparc:edgecolor=red
+            	########### BODY ends here ###########
+    	fi
+fi
+#+++++++++++++++++++++++++++ Script ends here +++++++++++++++++++++++++++

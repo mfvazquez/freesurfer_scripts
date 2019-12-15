@@ -1,0 +1,87 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#!/usr/bin/env bash
+
+#++++++++++++++++++++++++++ Script begins here ++++++++++++++++++++++++++
+if [ "$1" == "-h" ] || [ "$1" == "-help" ] || [ "$1" == "--help" ]; then
+    	########## HELP begins here ##########
+    	echo
+    	echo "Run processes in parallel."
+    	echo "This script is used to run processes in parallel. In this preliminar version, it reads the row elements of a column text file, creating an array and passing each element to the array to the program we would like to run as an input variable. Once the processing is done with the first element, the second element of the list will be passed as a variable and executed by the secondary script."
+    	echo "IMPORTANT: The secondary script must be adjusted so that it takes each element of the 'todo_array' as an input variable."
+
+    	echo "Hard coded:"
+    	echo "1) number of processors to be used in the process"
+    	echo "2) script to be run in parallel"
+    	echo "In future releases:"
+    	echo " \$ `basename $0` <#filename> "
+    	echo "              	>>>>Version: Beta 0.1 - 24.01.2013"
+    	echo ""
+    	########### HELP ends here ###########
+else
+    	if [ -z $1 ]; then
+            	$0 --help
+    	else
+        	FILENAME=$1;
+            	########## BODY begins here ##########
+            	set -o monitor
+            	#means: run background processes as separate processes, i.e. using a different processor each
+            	trap add_next_job CHLD
+
+            	# execute add_next_job when we receive a child complete signal
+
+            	#todo_array=($(echo `ls -d *`))
+            	#todo_array=($(echo `ls *.nii`))
+ #to read input from txt file
+            	while read array_elt
+            	do
+                	todo_array+=("$array_elt")
+            	done < $FILENAME
+            	# places input into an array, each element of the array will be passed as a variable later on
+            	index=0
+            	max_jobs=6
+            	# maximum number of processors to be used by the script
+            	function add_next_job {
+            	# if still jobs to do then add one
+                	A=${#todo_array[*]}
+                	#echo $A
+                	if [[ $index -lt ${#todo_array[*]} ]]
+                	# apparently stackoverflow doesn't like bash syntax
+                	# the hash in the if is not a comment - rather it's bash awkward way of getting its length
+                	then
+                    	#echo ${todo_array[$index]}
+
+                    	#sleep 1
+                    	#2fol_script 11
+                    	# dti_fit_loop ${todo_array[$index]} &
+#La siguiente linea es la que llama a l funcion “recon_all_andia”, es importante que este bien definio la variable todo array. 
+                    	recon_all_nadia ${todo_array[$index]} &
+                    	#before we used dcm2nii_Rn instead of $1 as follows:
+                    	#dcm2nii_Rn ${todo_array[$index]} &
+                    	#dcm2nii_loop_ttt ${todo_array[$index]} &
+                    	#echo $todo_array
+#r2_dti_fit_nadia ${todo_array[$index]} &
+                    	#${todo_array[$index]} &
+                    	# replace the line above with the command you want
+                    	index=$(($index+1))
+                	fi
+            	}
+
+            	function do_job {
+                	echo "starting job $1"
+                	sleep 2
+            	}
+
+           	# add initial set of jobs
+            	while [[ $index -lt $max_jobs ]]
+            	do
+                	add_next_job
+            	done
+
+           	# wait for all jobs to complete
+            	wait
+            	echo "Done :)"
+            	########### BODY ends here ###########
+    	fi
+fi
+#+++++++++++++++++++++++++++ Script ends here +++++++++++++++++++++++++++
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,41 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#!/bin/bash
+#++++++++++++++++++++++++++ Script begins here ++++++++++++++++++++++++++
+if [ "$1" == "-h" ] || [ "$1" == "-help" ] || [ "$1" == "--help" ]; then
+    	########## HELP begins here ##########
+    	echo
+    	echo "This bash organize files in the FREESURFER directorio that has been defined in the terminarl bash. It is set to rename the subjects based on their initial letters. It also creates a .txt file that is gonna be the input of the next stept of the analysis."
+    	echo " \$ `basename $0` <>"
+    	echo
+    	########### HELP ends here ###########
+elif [ "$1" == "edit" ]; then
+    	vim $0
+else
+    	if [ -z $1 ]; then
+            	$0 --help
+    	else
+            	########## BODY begins here ##########
+        	#SUBJECTS_DIR=/media/castor/lucas/FREESURFER/FS_LUCAS
+        	for a in *.nii;
+        	do
+            	SUBJINI=${a:0:3}
+#Aca esta un ejemplo de como ejecutar un if. Es fundamental que haya un espacio entre los [ ] y el inicio y final de la variable!
+            	if [ "$SUBJINI" == "APP" ]
+            	then
+                	SUBJID=${a:0:6}
+            	elif  [ "$SUBJINI" == "CON" ]
+            	then
+                	SUBJID=${a:0:5}
+            	fi
+
+            	echo $SUBJID >> subj.txt
+
+		#Mira que me parece que  esta linea de codigo de abajo hay que descomentarla
+            	#recon-all -s $SUBJID -i $a
+        	done
+
+            	########### BODY ends here ###########
+    	fi
+fi
+#+++++++++++++++++++++++++++ Script ends here +++++++++++++++++++++++++++
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
