@@ -5,7 +5,7 @@ function start_job {
 	echo "ending job $2" >> log.txt
 }
 
-for file in *;
+for file in *.nii;
 do
 	filename="${file%.*}"
 	start_job $file $filename &
