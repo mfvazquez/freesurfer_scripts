@@ -1,5 +1,5 @@
 #!/bin/bash
-SUFIX="parax"
+SUFIX=".anat"
 EXCLUDE="fsaverage"
 for file in *;
 do
